@@ -1,26 +1,29 @@
 import express from 'express'
+import colors from 'colors'
+import router from './router'
+import db from './config/db'
 
+// Conectar a BDD
+async function connectDB() {
+    try {
+        await db.authenticate()
+        db.sync()
+        console.log(colors.blue("Conexion exitosa a la BD"))
+    } catch(error) {
+        console.log(error)
+        console.log(colors.red.bold("Hubo un error al conectarse a la BD"))
+    }
+}
+
+connectDB()
+
+// Instancia de express
 const server = express()
 
-// Routing
-server.get('/', (req,res) => {
-    res.json("Desde GET")
-})
+// Leer datos de formularios
+server.use(express.json())
 
-server.post('/', (req,res) => {
-    res.json("Desde POST")
-})
+server.use('/api/products', router)
 
-server.put('/', (req,res) => {
-    res.json("Desde PUT")
-})
-
-server.patch('/', (req,res) => {
-    res.json("Desde PATCH")
-})
-
-server.delete('/', (req,res) => {
-    res.json("Desde DELETE")
-})
 
 export default server
