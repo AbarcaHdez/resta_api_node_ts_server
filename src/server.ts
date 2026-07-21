@@ -1,21 +1,8 @@
 import express from 'express'
-import colors from 'colors'
 import router from './router'
-import db from './config/db'
-
-// Conectar a BDD
-async function connectDB() {
-    try {
-        await db.authenticate()
-        await db.sync({ alter: true })
-        console.log(colors.blue("Conexion exitosa a la BD"))
-    } catch(error) {
-        console.log(error)
-        console.log(colors.red.bold("Hubo un error al conectarse a la BD"))
-    }
-}
-
-connectDB()
+import './config/db'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './config/swagger'
 
 // Instancia de express
 const server = express()
@@ -25,5 +12,7 @@ server.use(express.json())
 
 server.use('/api/products', router)
 
+// Docs
+server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 export default server
